@@ -15,7 +15,6 @@ class owaspzap implements Serializable {
         def ZAP_REPORT = "${ZAP_DIR}/report.html"
 
         try {
-            steps.stage('Run ZAP Scan') {
                 steps.echo "Running ZAP scan on ${TARGET_URL} using port ${ZAP_PORT}"
                 steps.sh """
                     cd ${ZAP_DIR}
@@ -40,5 +39,4 @@ class owaspzap implements Serializable {
             steps.currentBuild.result = 'FAILURE'
             throw e
         }
-    }
 }
