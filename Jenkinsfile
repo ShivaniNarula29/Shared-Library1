@@ -34,7 +34,6 @@ node {
             goTest.runTestsAndGenerateReports()
         }
 
-        // Mark build successful
         currentBuild.result = 'SUCCESS'
 
         stage('Notify Success') {
