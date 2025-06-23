@@ -1,4 +1,4 @@
-@Library('shared-library@main') _
+@Library('shivani-shared-library@main') _
 
 import org.teamdowntimecrew.common.CleanWorkspace
 import org.teamdowntimecrew.common.Notification
