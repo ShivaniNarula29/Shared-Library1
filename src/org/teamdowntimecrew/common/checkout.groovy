@@ -1,8 +1,8 @@
 package org.teamdowntimecrew.common
 
-class GitClone {
+class checkout {
     
-    static void cloneRepo(context, Map config = [:]) {
+    static void checkoutRepo(context, Map config = [:]) {
         def repoName = config.repoName ?: error("Missing repoName")
         def branch = config.branch ?: 'main'
         def url = config.url ?: error("Missing Git repo URL")
