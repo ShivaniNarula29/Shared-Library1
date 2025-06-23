@@ -8,7 +8,6 @@ class SetupTestConfig implements Serializable {
     }
 
     def run() {
-        steps.stage('Setup Test Config') {
             steps.sh '''
                 npm pkg set scripts.test="jest --json --outputFile=test-reports/test-results.json"
                 npm pkg set scripts.test:watch="jest --watch"
@@ -68,6 +67,5 @@ test('renders the passed text', () => {
 EOL
                 fi
             '''
-        }
     }
 }
