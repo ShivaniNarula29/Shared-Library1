@@ -1,5 +1,7 @@
 package org.teamdowntimecrew.template.react
 
+import org.teamdowntimecrew.common.owaspzap 
+
 class Dast implements Serializable {
     def script
 
