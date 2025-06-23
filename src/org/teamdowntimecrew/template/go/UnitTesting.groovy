@@ -1,4 +1,4 @@
-package org.teamdowntimecrew.template.go.unit_testing
+package org.teamdowntimecrew.template.go
 
 class UnitTesting implements Serializable {
     def steps
