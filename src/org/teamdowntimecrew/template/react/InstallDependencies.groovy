@@ -8,7 +8,6 @@ class InstallDependencies implements Serializable {
     }
 
     def run() {
-        steps.stage('Install Dependencies') {
             steps.sh '''
                 npm install --save-dev \\
                 jest@26.6.3 \\
@@ -20,6 +19,5 @@ class InstallDependencies implements Serializable {
                 react-test-renderer@16.14.0 \\
                 --legacy-peer-deps
             '''
-        }
     }
 }
