@@ -3,7 +3,7 @@ package org.teamdowntime.common
 class Notification implements Serializable {
     def steps
 
-    notification(steps) {
+    Notification(steps) {
         this.steps = steps
     }
 
