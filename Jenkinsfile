@@ -5,85 +5,70 @@ import org.teamdowntimecrew.common.CleanWorkspace
 import org.teamdowntimecrew.common.Checkout
 import org.teamdowntimecrew.common.Notification
 
-pipeline {
-    agent any
+node {
+    def goHome = tool 'go'
 
-    tools {
-        go 'go'
-    }
+    env.REPO_URL = 'https://github.com/snaatak-Downtime-Crew/employee-api.git'
+    env.CREDENTIAL_ID = 'downtime_github'
+    env.BRANCH = 'main'
+    env.PRIORITY = 'P0'
+    env.SLACK_CHANNEL = 'golang-notification'
+    env.EMAIL_RECIPIENTS = 'shivaninarula9211@gmail.com'
+    env.SLACK_CRED_ID = 'downtime-crew'
 
-    environment {
-        REPO_URL = 'https://github.com/snaatak-Downtime-Crew/employee-api.git'
-        CREDENTIAL_ID = 'downtime_github'
-        BRANCH = 'main'
-        PRIORITY = 'P0'
-        SLACK_CHANNEL = 'golang-notification'
-        EMAIL_RECIPIENTS = 'shivaninarula9211@gmail.com'
-        SLACK_CRED_ID = 'downtime-crew'
-    }
+    env.PATH = "${goHome}/bin:${env.PATH}"
 
-    stages {
+    try {
         stage('Cleanup') {
-            steps {
-                script {
-                    def cleaner = new CleanWorkspace(this)
-                    cleaner.call()
-                }
-            }
+            def cleaner = new CleanWorkspace(this)
+            cleaner.call()
         }
 
         stage('Checkout Code') {
-            steps {
-                script {
-                    def checkoutUtil = new Checkout(this)
-                    checkoutUtil.checkout(env.BRANCH, env.REPO_URL, env.CREDENTIAL_ID)
-                }
-            }
+            def checkoutUtil = new Checkout(this)
+            checkoutUtil.checkout(env.BRANCH, env.REPO_URL, env.CREDENTIAL_ID)
         }
 
         stage('Go Unit Testing') {
-            steps {
-                script {
-                    def goTest = new UnitTesting(this)
-                    goTest.runTestsAndGenerateReports()
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            script {
-                def notifier = new Notification(this)
-                notifier.call([
-                    status: 'SUCCESS',
-                    buildTrigger: currentBuild.getBuildCauses()[0].shortDescription,
-                    slackChannel: env.SLACK_CHANNEL,
-                    slackCredId: env.SLACK_CRED_ID,
-                    emailTo: env.EMAIL_RECIPIENTS,
-                    reportLinks: [
-                        [name: 'Go Test Report', url: "${env.BUILD_URL}artifact/test-reports/test-output.txt"]
-                    ]
-                ])
-            }
+            def goTest = new UnitTesting(this)
+            goTest.runTestsAndGenerateReports()
         }
 
-        failure {
-            script {
-                def notifier = new Notification(this)
-                notifier.call([
-                    status: 'FAILURE',
-                    buildTrigger: currentBuild.getBuildCauses()[0].shortDescription,
-                    failedStage: env.STAGE_NAME ?: 'Unknown',
-                    failureReason: currentBuild.rawBuild.getLog(100).join("\n"),
-                    slackChannel: env.SLACK_CHANNEL,
-                    slackCredId: env.SLACK_CRED_ID,
-                    emailTo: env.EMAIL_RECIPIENTS,
-                    reportLinks: [
-                        [name: 'Go Test Report', url: "${env.BUILD_URL}artifact/test-reports/test-output.txt"]
-                    ]
-                ])
-            }
+        // Mark build successful
+        currentBuild.result = 'SUCCESS'
+
+        stage('Notify Success') {
+            def notifier = new Notification(this)
+            notifier.call([
+                status: 'SUCCESS',
+                buildTrigger: currentBuild.getBuildCauses()[0]?.shortDescription ?: 'Unknown',
+                slackChannel: env.SLACK_CHANNEL,
+                slackCredId: env.SLACK_CRED_ID,
+                emailTo: env.EMAIL_RECIPIENTS,
+                reportLinks: [
+                    [name: 'Go Test Report', url: "${env.BUILD_URL}artifact/test-reports/test-output.txt"]
+                ]
+            ])
         }
+
+    } catch (Exception e) {
+        currentBuild.result = 'FAILURE'
+
+        stage('Notify Failure') {
+            def notifier = new Notification(this)
+            notifier.call([
+                status: 'FAILURE',
+                buildTrigger: currentBuild.getBuildCauses()[0]?.shortDescription ?: 'Unknown',
+                failedStage: env.STAGE_NAME ?: 'Unknown',
+                failureReason: e.message,
+                slackChannel: env.SLACK_CHANNEL,
+                slackCredId: env.SLACK_CRED_ID,
+                emailTo: env.EMAIL_RECIPIENTS,
+                reportLinks: [
+                    [name: 'Go Test Report', url: "${env.BUILD_URL}artifact/test-reports/test-output.txt"]
+                ]
+            ])
+        }
+        throw e
     }
 }
