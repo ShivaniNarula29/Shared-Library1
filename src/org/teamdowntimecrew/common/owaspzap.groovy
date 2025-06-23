@@ -15,22 +15,21 @@ class owaspzap implements Serializable {
         def ZAP_REPORT = "${ZAP_DIR}/report.html"
 
         try {
-                steps.echo "Running ZAP scan on ${TARGET_URL} using port ${ZAP_PORT}"
-                steps.sh """
-                    cd ${ZAP_DIR}
-                    chmod +x zap.sh
-                    ZAP_HOME=${ZAP_HOME} ./zap.sh -cmd \\
-                        -port ${ZAP_PORT} \\
-                        -quickurl ${TARGET_URL} \\
-                        -quickprogress \\
-                        -quickout ${ZAP_REPORT}
-                """
-            }
+            steps.echo "Running ZAP scan on ${TARGET_URL} using port ${ZAP_PORT}"
 
-            steps.stage('Archive ZAP Report') {
-                steps.sh "cp ${ZAP_REPORT} ."
-                steps.archiveArtifacts artifacts: 'report.html', allowEmptyArchive: false
-            }
+            steps.sh """
+                cd ${ZAP_DIR}
+                chmod +x zap.sh
+                ZAP_HOME=${ZAP_HOME} ./zap.sh -cmd \\
+                    -port ${ZAP_PORT} \\
+                    -quickurl ${TARGET_URL} \\
+                    -quickprogress \\
+                    -quickout ${ZAP_REPORT}
+            """
+
+            steps.echo "Archiving ZAP report..."
+            steps.sh "cp ${ZAP_REPORT} ."
+            steps.archiveArtifacts artifacts: 'report.html', allowEmptyArchive: false
 
             steps.echo "✅ ZAP scan completed successfully."
 
@@ -39,4 +38,5 @@ class owaspzap implements Serializable {
             steps.currentBuild.result = 'FAILURE'
             throw e
         }
+    }
 }
