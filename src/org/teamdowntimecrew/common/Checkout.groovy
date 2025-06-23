@@ -1,26 +1,20 @@
-package org.teamdowntimecrew.common
+package org.cloudninja.application.generic
 
-class Checkout {
+class Checkout implements Serializable {
+    def steps
 
-    static void checkoutRepo(context, Map config = [:]) {
-        def repoName = config.repoName ?: error("Missing repoName")
-        def branch = config.branch ?: 'main'
-        def url = config.url ?: error("Missing Git repo URL")
-        def credentialsId = config.credentialsId ?: error("Missing credentialsId")
+    Checkout(steps) {
+        this.steps = steps
+    }
 
-       context.dir(repoName) {
-            context.checkout([
+    def fromGit(String branch = 'main', String repoUrl = '', String credentialsId = '') {
+        steps.stage('Checkout') {
+            steps.echo "Checking out branch '${branch}' from '${repoUrl}'"
+            steps.checkout([
                 $class: 'GitSCM',
                 branches: [[name: "*/${branch}"]],
-                userRemoteConfigs: [[
-                    url: url,
-                    credentialsId: credentialsId
-                ]]
+                userRemoteConfigs: [[url: repoUrl, credentialsId: credentialsId]]
             ])
         }
     }
-
-private static void error(String message) {
-    throw new IllegalArgumentException(message)
- }
 }
