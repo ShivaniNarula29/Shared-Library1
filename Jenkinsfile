@@ -1,7 +1,7 @@
 @Library('shivani-shared-library@main') _
 
 import org.teamdowntimecrew.template.go.UnitTesting
-import org.teamdowntimecrew.common.Cleanworkspace
+import org.teamdowntime.common.CleanWorkspace
 import org.teamdowntimecrew.common.Checkout
 import org.teamdowntimecrew.common.Notification
 
@@ -22,12 +22,13 @@ pipeline {
     }
 
   
-    stages {
-        stage('Clean WorkSpace') {
-            steps {
-                script {
-                    def checkoutUtil = new CleanWorkSpace(this)
-                    checkoutUtil.call()
+         stages {
+            stage('Cleanup') {
+                steps {
+                    script {
+                        def cleaner = new CleanWorkspace(this)
+                        cleaner.clean()
+                    }
                 }
             }
         }
