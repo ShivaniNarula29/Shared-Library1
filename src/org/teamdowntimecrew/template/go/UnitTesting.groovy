@@ -10,8 +10,8 @@ class UnitTesting implements Serializable {
     def runTestsAndGenerateReports() {
         steps.stage('Run Tests and Generate Reports') {
             steps.sh '''
-                sh 'mkdir -p test-reports'
-                sh 'go test ./... -run=^$ -skip=./api -v > test-reports/test-output.txt || true'
+                mkdir -p test-reports
+                go test ./... -run=^$ -skip=./api -v > test-reports/test-output.txt || true
             '''
         }
     }
