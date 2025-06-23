@@ -1,4 +1,4 @@
-package org.teamdowntimecrew.frontend
+package org.teamdowntimecrew.template.react
 
 class UnitTesting implements Serializable {
     def steps
