@@ -36,7 +36,7 @@ node {
 
         currentBuild.result = 'SUCCESS'
 
-        stage('Notify Success') {
+        stage('Notify E-Mail/Slack') {
             def notifier = new Notification(this)
             notifier.call([
                 status: 'SUCCESS',
@@ -53,7 +53,7 @@ node {
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
 
-        stage('Notify Failure') {
+        stage('Notify E-Mail/Slack') {
             def notifier = new Notification(this)
             notifier.call([
                 status: 'FAILURE',
