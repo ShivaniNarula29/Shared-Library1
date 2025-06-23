@@ -7,9 +7,9 @@ class CleanWorkspace implements Serializable {
         this.steps = steps
     }
 
-    def clean() {
+    def call() {
         steps.stage('Clean Workspace') {
-            steps.echo "Cleaning workspace"
+            steps.echo "Cleaning up workspace"
             steps.cleanWs()
         }
     }
