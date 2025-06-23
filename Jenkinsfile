@@ -22,18 +22,15 @@ node {
     env.EMAIL_TO = 'shivani.narula.snaatak@mygurukulam.co'
 
     def UNIT_TEST_SCOPE = params.UNIT_TEST_SCOPE ?: 'ALL'
-    def buildTrigger = ''
+    def buildTrigger = currentBuild.getBuildCauses()[0]?.shortDescription ?: 'Auto-triggered'
     def failedStage = ''
     def failureReason = ''
+    def reportLinks = []
 
     try {
         stage('Cleanup') {
             def cleaner = new CleanWorkspace(this)
             cleaner.call()
-        }
-
-        stage('Initialize') {
-            buildTrigger = currentBuild.getBuildCauses()[0]?.shortDescription ?: 'Auto-triggered'
         }
 
         stage('Checkout Selected Repositories') {
@@ -60,6 +57,7 @@ node {
                     tester.runTestsAndGenerateReports([
                         reportFile: 'unit_test_attendance.txt'
                     ])
+                    reportLinks << [name: 'Attendance Test Report', url: "${env.BUILD_URL}artifact/unit_test_attendance.txt"]
                 }
             }
 
@@ -68,6 +66,7 @@ node {
                     tester.runTestsAndGenerateReports([
                         reportFile: 'unit_test_notification.txt'
                     ])
+                    reportLinks << [name: 'Notification Test Report', url: "${env.BUILD_URL}artifact/unit_test_notification.txt"]
                 }
             }
         }
@@ -82,10 +81,7 @@ node {
                 slackChannel: env.SLACK_CHANNEL,
                 slackCredId: env.SLACK_CRED_ID,
                 emailTo: env.EMAIL_TO,
-                reportLinks: [
-                    [name: 'Attendance Test Report', url: "${env.BUILD_URL}artifact/attendance-api/unit_test_attendance.txt"],
-                    [name: 'Notification Test Report', url: "${env.BUILD_URL}artifact/notification-worker/unit_test_notification.txt"]
-                ]
+                reportLinks: reportLinks
             ])
         }
 
@@ -104,10 +100,7 @@ node {
                 slackChannel: env.SLACK_CHANNEL,
                 slackCredId: env.SLACK_CRED_ID,
                 emailTo: env.EMAIL_TO,
-                reportLinks: [
-                    [name: 'Attendance Test Report', url: "${env.BUILD_URL}artifact/attendance-api/unit_test_attendance.txt"],
-                    [name: 'Notification Test Report', url: "${env.BUILD_URL}artifact/notification-worker/unit_test_notification.txt"]
-                ]
+                reportLinks: reportLinks
             ])
         }
         throw e
