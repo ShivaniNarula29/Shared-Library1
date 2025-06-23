@@ -55,28 +55,34 @@ pipeline {
         success {
             script {
                 def notifier = new Notification(this)
-                notifier.call(
+                notifier.call([
                     status: 'SUCCESS',
                     buildTrigger: currentBuild.getBuildCauses()[0].shortDescription,
                     slackChannel: env.SLACK_CHANNEL,
                     slackCredId: env.SLACK_CRED_ID,
-                    emailTo: env.EMAIL_RECIPIENTS
-                )
+                    emailTo: env.EMAIL_RECIPIENTS,
+                    reportLinks: [
+                        [name: 'Go Test Report', url: "${env.BUILD_URL}artifact/test-reports/test-output.txt"]
+                    ]
+                ])
             }
         }
 
         failure {
             script {
                 def notifier = new Notification(this)
-                notifier.call(
+                notifier.call([
                     status: 'FAILURE',
                     buildTrigger: currentBuild.getBuildCauses()[0].shortDescription,
-                    failedStage: env.STAGE_NAME,
+                    failedStage: env.STAGE_NAME ?: 'Unknown',
                     failureReason: currentBuild.rawBuild.getLog(100).join("\n"),
                     slackChannel: env.SLACK_CHANNEL,
                     slackCredId: env.SLACK_CRED_ID,
-                    emailTo: env.EMAIL_RECIPIENTS
-                )
+                    emailTo: env.EMAIL_RECIPIENTS,
+                    reportLinks: [
+                        [name: 'Go Test Report', url: "${env.BUILD_URL}artifact/test-reports/test-output.txt"]
+                    ]
+                ])
             }
         }
     }
