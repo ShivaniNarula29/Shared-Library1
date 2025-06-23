@@ -20,14 +20,15 @@ node {
         }
 
         stage('Run React ZAP DAST Scan') {
-           def dastRunner = new Dast(this)
-            dastRunner.call([
-                ZAP_HOME  : env.ZAP_HOME,
-                ZAP_DIR   : env.ZAP_DIR,
-                TARGET_URL: env.TARGET_URL,
-                ZAP_PORT  : '8092'
-            ])
-
+            script {
+                def dastRunner = new Dast(this)
+                dastRunner.call([
+                    ZAP_HOME  : env.ZAP_HOME,
+                    ZAP_DIR   : env.ZAP_DIR,
+                    TARGET_URL: env.TARGET_URL,
+                    ZAP_PORT  : '8092'
+                ])
+            }
         }
 
         currentBuild.result = 'SUCCESS'
@@ -64,7 +65,7 @@ node {
                 ]
             ])
         }
+
         throw e
-    }
     }
 }
