@@ -19,6 +19,7 @@ pipeline {
         PRIORITY = 'P0'
         SLACK_CHANNEL = 'golang-notification'
         EMAIL_RECIPIENTS = 'shivaninarula9211@gmail.com'
+        SLACK_CRED_ID = 'downtime-crew'
     }
 
     stages {
@@ -46,6 +47,36 @@ pipeline {
                     def goTest = new UnitTesting(this)
                     goTest.runTestsAndGenerateReports()
                 }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def notifier = new Notification(this)
+                notifier.call(
+                    status: 'SUCCESS',
+                    buildTrigger: currentBuild.getBuildCauses()[0].shortDescription,
+                    slackChannel: env.SLACK_CHANNEL,
+                    slackCredId: env.SLACK_CRED_ID,
+                    emailTo: env.EMAIL_RECIPIENTS
+                )
+            }
+        }
+
+        failure {
+            script {
+                def notifier = new Notification(this)
+                notifier.call(
+                    status: 'FAILURE',
+                    buildTrigger: currentBuild.getBuildCauses()[0].shortDescription,
+                    failedStage: env.STAGE_NAME,
+                    failureReason: currentBuild.rawBuild.getLog(100).join("\n"),
+                    slackChannel: env.SLACK_CHANNEL,
+                    slackCredId: env.SLACK_CRED_ID,
+                    emailTo: env.EMAIL_RECIPIENTS
+                )
             }
         }
     }
