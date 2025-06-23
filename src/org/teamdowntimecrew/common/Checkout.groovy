@@ -1,4 +1,4 @@
-package org.cloudninja.application.generic
+package org.teamdowntimecrew.common
 
 class Checkout implements Serializable {
     def steps
@@ -7,14 +7,17 @@ class Checkout implements Serializable {
         this.steps = steps
     }
 
-    def fromGit(String branch = 'main', String repoUrl = '', String credentialsId = '') {
-        steps.stage('Checkout') {
-            steps.echo "Checking out branch '${branch}' from '${repoUrl}'"
+    def checkout(String branch, String url, String credentialsId) {
+        steps.stage('Checkout Code') {
             steps.checkout([
                 $class: 'GitSCM',
                 branches: [[name: "*/${branch}"]],
-                userRemoteConfigs: [[url: repoUrl, credentialsId: credentialsId]]
+                userRemoteConfigs: [[
+                    url: url,
+                    credentialsId: credentialsId
+                ]]
             ])
         }
     }
 }
+
