@@ -8,7 +8,7 @@ import org.teamdowntimecrew.common.Notification
 node {
     def mvnTool = tool 'maven3.9.9' // Change this to match your configured Maven tool in Jenkins
 
-    env.REPO_URL = 'https://github.com/snaatak-Downtime-Crew/employee-api.git'
+    env.REPO_URL = 'https://github.com/snaatak-Downtime-Crew/salary-api.git'
     env.CREDENTIAL_ID = 'downtime_github'
     env.BRANCH = 'main'
     env.PRIORITY = 'P0'
