@@ -2,7 +2,7 @@
 
 import org.teamdowntimecrew.common.CleanWorkspace
 import org.teamdowntimecrew.common.Notification
-import org.teamdowntimecrew.template.react.dast
+import org.teamdowntimecrew.template.react.Dast
 
 node {
     env.ZAP_HOME = "/var/lib/jenkins/.ZAP-CI"
@@ -20,8 +20,14 @@ node {
         }
 
         stage('Run React ZAP DAST Scan') {
-            def dastRunner = new dast(this)
-            dastRunner.call(env.TARGET_URL)
+           def dastRunner = new Dast(this)
+            dastRunner.call([
+                ZAP_HOME  : env.ZAP_HOME,
+                ZAP_DIR   : env.ZAP_DIR,
+                TARGET_URL: env.TARGET_URL,
+                ZAP_PORT  : '8092'
+            ])
+
         }
 
         currentBuild.result = 'SUCCESS'
