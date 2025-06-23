@@ -8,7 +8,6 @@ class Checkout implements Serializable {
     }
 
     def checkout(String branch, String url, String credentialsId) {
-        steps.stage('Checkout Code') {
             steps.checkout([
                 $class: 'GitSCM',
                 branches: [[name: "*/${branch}"]],
@@ -18,6 +17,4 @@ class Checkout implements Serializable {
                 ]]
             ])
         }
-    }
 }
-
