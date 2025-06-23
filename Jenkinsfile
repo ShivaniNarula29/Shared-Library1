@@ -65,12 +65,6 @@ node {
             ])
         }
         throw e
-    } finally {
-        stage('Cleanup ZAP Processes') {
-            echo '🧹 Cleaning up ZAP processes if needed...'
-            sh '''
-                ps aux | grep '[z]ap' | awk '{print $2}' | xargs -r sudo kill -9 || true
-            '''
-        }
+    }
     }
 }
