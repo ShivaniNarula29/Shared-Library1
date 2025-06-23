@@ -29,7 +29,7 @@ node {
             checkoutUtil.checkout(env.BRANCH, env.REPO_URL, env.CREDENTIAL_ID)
         }
 
-        stage('Go Unit Testing') {
+        stage('Go Unit Tests & Report') {
             def goTest = new UnitTesting(this)
             goTest.runTestsAndGenerateReports()
         }
