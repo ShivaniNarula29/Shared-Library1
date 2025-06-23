@@ -13,6 +13,7 @@ class UnitTesting implements Serializable {
                 mkdir -p test-reports
                 go test ./... -run=^$ -skip=./api -v > test-reports/test-output.txt || true
             '''
+            steps.archiveArtifacts artifacts: 'test-reports/test-output.txt', fingerprint: true
         }
     }
 }
