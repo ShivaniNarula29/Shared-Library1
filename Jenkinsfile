@@ -1,7 +1,7 @@
 @Library('shivani-shared-library@main') _
 
 import org.teamdowntimecrew.template.go.UnitTesting
-import org.teamdowntime.common.CleanWorkspace
+import org.teamdowntimecrew.common.CleanWorkspace
 import org.teamdowntimecrew.common.Checkout
 import org.teamdowntimecrew.common.Notification
 
@@ -21,24 +21,21 @@ pipeline {
         EMAIL_RECIPIENTS = 'shivaninarula9211@gmail.com'
     }
 
-  
-         stages {
-            stage('Cleanup') {
-                steps {
-                    script {
-                        def cleaner = new CleanWorkspace(this)
-                        cleaner.clean()
-                    }
+    stages {
+        stage('Cleanup') {
+            steps {
+                script {
+                    def cleaner = new CleanWorkspace(this)
+                    cleaner.clean()
                 }
             }
         }
-
 
         stage('Checkout Code') {
             steps {
                 script {
                     def checkoutUtil = new Checkout(this)
-                    checkoutUtil.Checkout(env.BRANCH, env.REPO_URL, env.CREDENTIAL_ID)
+                    checkoutUtil.checkout(env.BRANCH, env.REPO_URL, env.CREDENTIAL_ID)
                 }
             }
         }
