@@ -3,7 +3,7 @@
 import org.teamdowntimecrew.common.CleanWorkspace
 import org.teamdowntimecrew.common.Checkout
 import org.teamdowntimecrew.common.Notification
-import org.teamdowntimecrew.template.python.PythonUnitTesting
+import org.teamdowntimecrew.template.python.UnitTesting
 
 properties([
     parameters([
@@ -53,7 +53,7 @@ node {
         }
 
         stage('Run Python Unit Tests') {
-            def tester = new PythonUnitTesting(this)
+            def tester = new UnitTesting(this)
 
             if (UNIT_TEST_SCOPE in ['ALL', 'ATTENDANCE']) {
                 dir('attendance-api') {
