@@ -33,7 +33,6 @@ pipeline {
         }
 
 
-    stages {
         stage('Checkout Code') {
             steps {
                 script {
@@ -50,26 +49,6 @@ pipeline {
                     goTest.runTestsAndGenerateReports()
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            script {
-                def notifier = new Notification(this)
-                notifier.send('SUCCESS', env.PRIORITY, env.SLACK_CHANNEL, env.EMAIL_RECIPIENTS)
-            }
-        }
-        failure {
-            script {
-                def notifier = new Notification(this)
-                notifier.send('FAILURE', env.PRIORITY, env.SLACK_CHANNEL, env.EMAIL_RECIPIENTS)
-            }
-        }
-        always {
-            archiveArtifacts artifacts: 'coverage-reports/coverage.out, coverage-reports/coverage.html, test-reports/report.xml', fingerprint: true
-            echo "Build completed"
-            deleteDir()
         }
     }
 }
