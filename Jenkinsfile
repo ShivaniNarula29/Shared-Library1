@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     def cleaner = new CleanWorkspace(this)
-                    cleaner.clean()
+                    cleaner.call()
                 }
             }
         }
