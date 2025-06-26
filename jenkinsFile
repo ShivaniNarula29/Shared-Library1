@@ -1,0 +1,34 @@
+@Library('shivani-shared-library@main') _
+
+properties([
+    parameters([
+        string(name: 'REPO_URL', defaultValue: 'https://github.com/snaatak-Downtime-Crew/ansible.git', description: 'Git repo URL'),
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to checkout'),
+        string(name: 'CREDENTIALS_ID', defaultValue: 'downtime_github', description: 'Git credentials ID'),
+        string(name: 'SLACK_CHANNEL', defaultValue: 'notificationn-channel', description: 'Slack channel'),
+        string(name: 'SLACK_CREDENTIAL_ID', defaultValue: 'downtime-crew', description: 'Slack credentials ID'),
+        string(name: 'RECIPIENT', defaultValue: 'shivani.narula.snaatak@mygurukulam.co', description: 'Email recipient'),
+        string(name: 'PRIORITY', defaultValue: 'P1', description: 'Priority for notifications'),
+        string(name: 'YAML_PATH', defaultValue: 'frontend/playbook', description: 'YAML Lint Path'),
+        string(name: 'PLAYBOOK_PATH', defaultValue: 'site.yml', description: 'Ansible Playbook Path'),
+        string(name: 'VENV_DIR', defaultValue: 'venv', description: 'Virtualenv directory')
+    ])
+])
+
+node {
+    echo "Triggering templateJenkinsfile with branch: ${params.BRANCH} and repo: ${params.REPO_URL}"
+
+       def ansibleCI = new org.teamdowntimecrew.template.ansible.ansibleCIPipeline()
+    ansibleCI.call([
+        gitRepoUrl       : params.REPO_URL,
+        gitBranch        : params.BRANCH,
+        gitCredsId : params.CREDENTIALS_ID,
+        slackChannel  : params.SLACK_CHANNEL,
+        slackCredId   : params.SLACK_CREDENTIAL_ID,
+        emailRecipient: params.RECIPIENT,
+        priority      : params.PRIORITY,
+        yamlPath      : params.YAML_PATH,
+        playbookPath  : params.PLAYBOOK_PATH,
+        venvDir       : params.VENV_DIR
+    ])
+}
